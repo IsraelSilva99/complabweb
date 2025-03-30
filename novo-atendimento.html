@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompLab Advanced - Novo Atendimento</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <?php require 'php/dashboard.php'; ?>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/microscope-logo.png" alt="Logo" style="width: 40px;">
+                <h1>CompLab Advanced</h1>
+            </div>
+            <ul>
+                <li><a href="novo-atendimento.html" data-page="novo-atendimento"><svg class="sidebar-icon"
+                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14m-7-7h14"></path>
+                        </svg><span>Novo Atendimento</span></a></li>
+                <li><a href="dashboard.html" data-page="dashboard"><svg class="sidebar-icon"
+                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg><span>Atendimento</span></a></li>
+                <li><a href="configuracoes.html" data-page="configuracoes"><svg class="sidebar-icon"
+                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l-.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg><span>Configurações</span></a></li>
+                <li><a href="#" data-page="financeiro"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg"
+                            width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="20" x2="12" y2="10"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="16"></line>
+                        </svg><span>Financeiro</span></a></li>
+                <li><a href="#" data-page="relatorios"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg"
+                            width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 2H3v6h18V2z"></path>
+                            <path d="M21 10H3v6h18v-6z"></path>
+                            <path d="M21 18H3v4h18v-4z"></path>
+                        </svg><span>Relatórios</span></a></li>
+                <li><a href="#" data-page="adicionais"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg"
+                            width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20"></path>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg><span>Adicionais</span></a></li>
+                <li><a href="#" data-page="ajuda"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg"
+                            width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg><span>Ajuda</span></a></li>
+                <li><a href="php/logout.php"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" width="20"
+                            height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg><span>Sair</span></a></li>
+            </ul>
+        </aside>
+        <main>
+            <div class="dashboard-content">
+                <h2>Novo Atendimento</h2>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="aba1">Convênio e Exame</button>
+                    <button class="tab-btn" data-tab="aba2">Dados do Paciente</button>
+                    <button class="tab-btn" data-tab="aba3">Detalhes do Atendimento</button>
+                </div>
+                <form id="cadastro-atendimento">
+                    <div class="tab-content active" id="aba1">
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <select id="convenio" name="convenio" required>
+                                    <option value="">Carregando convênios...</option>
+                                </select>
+                                <label for="convenio">Convênio</label>
+                            </div>
+                            <div class="form-group">
+                                <div id="exames-container">
+                                    <select class="exame-select" name="exames[]" required>
+                                        <option value="">Carregando exames...</option>
+                                    </select>
+                                    <label>Exame</label>
+                                </div>
+                                <button type="button" class="btn btn-config" onclick="addExame()">+ Adicionar
+                                    Exame</button>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-sair"
+                                onclick="window.location.href='dashboard.html'">Voltar</button>
+                            <button type="button" class="btn btn-entrar" onclick="nextTab('aba2')">Próximo</button>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="aba2">
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
+                                <input type="text" id="rg" name="rg" placeholder=" " required>
+                                <label for="rg">RG do Paciente</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="cpf" name="cpf" placeholder=" " required>
+                                <label for="cpf">CPF do Paciente</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="nome" name="nome" placeholder=" " required>
+                                <label for="nome">Nome Completo</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="date" id="data-nascimento" name="data-nascimento" required>
+                                <label for="data-nascimento">Data de Nascimento</label>
+                            </div>
+                            <div class="form-group">
+                                <select id="sexo" name="sexo" required>
+                                    <option value="">Selecione o Sexo</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                                <label for="sexo">Sexo</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="acompanhante" name="acompanhante" placeholder=" ">
+                                <label for="acompanhante">Acompanhante</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="cpf-acompanhante" name="cpf-acompanhante" placeholder=" ">
+                                <label for="cpf-acompanhante">CPF do Acompanhante</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="data-cadastro" name="data-cadastro" readonly>
+                                <label for="data-cadastro">Data do Cadastro</label>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-sair"
+                                onclick="window.location.href='dashboard.html'">Voltar</button>
+                            <button type="button" class="btn btn-entrar" onclick="nextTab('aba3')">Próximo</button>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="aba3">
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
+                                <select id="medico" name="medico" required>
+                                    <option value="">Selecione o Médico</option>
+                                </select>
+                                <label for="medico">Médico</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="local-coleta" name="local-coleta" placeholder=" " required>
+                                <label for="local-coleta">Local de Coleta</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="local-entrega" name="local-entrega" placeholder=" " required>
+                                <label for="local-entrega">Local de Entrega</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="procedencia" name="procedencia" placeholder=" " required>
+                                <label for="procedencia">Procedência</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="nome-mae" name="nome-mae" placeholder=" " required>
+                                <label for="nome-mae">Nome da Mãe</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="telefone" name="telefone" placeholder=" " required>
+                                <label for="telefone">Telefone</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="endereco" name="endereco" placeholder=" " required>
+                                <label for="endereco">Endereço</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="bairro" name="bairro" placeholder=" " required>
+                                <label for="bairro">Bairro</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="cidade" name="cidade" placeholder=" " required>
+                                <label for="cidade">Cidade</label>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-sair"
+                                onclick="window.location.href='dashboard.html'">Voltar</button>
+                            <button type="submit" class="btn btn-entrar">Cadastrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <footer>
+        <p>
+            <?php echo date('d/m/Y | D d/M/Y H:i:s'); ?>
+        </p>
+    </footer>
+    <script src="js/script.js"></script>
+    <div id="toast-container" class="toast-container"></div>
+</body>
+
+</html>

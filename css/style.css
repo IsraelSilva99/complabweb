@@ -1,0 +1,586 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #f7fafc;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Login Page */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dbeafe, #f0f9ff);
+}
+
+.login-container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.logo h1 {
+    font-size: 1.8em;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #1e3a8a;
+    outline: none;
+    box-shadow: 0 0 5px rgba(30, 58, 138, 0.3);
+}
+
+.form-group label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 0.9em;
+    transition: all 0.3s;
+    pointer-events: none;
+}
+
+.form-group input:focus+label,
+.form-group input:not(:placeholder-shown)+label,
+.form-group select:focus+label,
+.form-group select:not(:placeholder-shown)+label {
+    top: 0;
+    left: 10px;
+    font-size: 0.8em;
+    background: #fff;
+    padding: 0 5px;
+    color: #1e3a8a;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-sair {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-sair:hover {
+    background: #d1d5db;
+}
+
+.btn-entrar {
+    background: #1e3a8a;
+    color: #fff;
+}
+
+.btn-entrar:hover {
+    background: #1e40af;
+}
+
+.btn-config {
+    background: #f0f9ff;
+    color: #1e3a8a;
+}
+
+.btn-config:hover {
+    background: #dbeafe;
+}
+
+.icon {
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* Container e Sidebar */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: #1e3a8a;
+    color: #fff;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .logo {
+    margin-bottom: 40px;
+    justify-content: center;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar ul li a.active {
+    background: #fff;
+    color: #1e3a8a;
+}
+
+.sidebar-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+main {
+    margin-left: 250px;
+    padding: 40px;
+    flex-grow: 1;
+}
+
+.dashboard-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    min-height: calc(100vh - 120px);
+}
+
+.dashboard-content h2 {
+    font-size: 2em;
+    color: #1e3a8a;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.menu-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.option-card {
+    background: #f0f9ff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    color: #1e3a8a;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.option-card:hover {
+    background: #dbeafe;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.alert {
+    margin-top: 30px;
+    padding: 15px;
+    background: #fef2f2;
+    border-radius: 8px;
+    color: #991b1b;
+    text-align: center;
+}
+
+footer {
+    padding: 20px;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Novo Atendimento */
+.tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.tab-btn {
+    padding: 12px 25px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #374151;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    background: #1e3a8a;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content {
+    display: none;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.form-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Patient List */
+.patient-list {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.patient-list table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.patient-list th,
+.patient-list td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.patient-list th {
+    background: #1e3a8a;
+    color: #fff;
+    font-weight: 600;
+}
+
+.patient-list tr:hover {
+    background: #f0f9ff;
+    cursor: pointer;
+}
+
+.patient-list td {
+    color: #374151;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+    color: #1e3a8a;
+}
+
+#patient-details {
+    margin-bottom: 20px;
+    text-align: left;
+    color: #333;
+}
+
+#patient-details p {
+    margin: 10px 0;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Ajuste para múltiplos exames */
+#exames-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.exame-select {
+    margin-bottom: 10px;
+}
+
+/* List Container */
+.list-container {
+    margin-top: 30px;
+}
+
+.list-container h3 {
+    color: #1e3a8a;
+    margin-bottom: 15px;
+}
+
+.list-container ul {
+    list-style: none;
+    background: #f0f9ff;
+    padding: 15px;
+    border-radius: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.list-container ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+.list-container ul::-webkit-scrollbar-thumb {
+    background: #1e3a8a;
+    border-radius: 10px;
+}
+
+.list-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Já existe, mas reforça o alinhamento vertical */
+    padding: 10px;
+    border-bottom: 1px solid #dbeafe;
+    color: #374151;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.list-container li:last-child {
+    border-bottom: none;
+}
+
+.list-container li:hover {
+    background: #e0f2fe;
+    cursor: pointer;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.btn-ativar {
+    background-color: #10b981;
+    /* Verde */
+    color: white;
+}
+
+.btn-ativar:hover {
+    background-color: #059669;
+}
+
+.btn-desativar {
+    background-color: #ef4444;
+    /* Vermelho */
+    color: white;
+}
+
+.btn-desativar:hover {
+    background-color: #dc2626;
+}
+
+.status {
+    font-weight: bold;
+    color: #1f2937;
+}
+
+/* Estilos para Toast */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000; /* Aumentado para garantir visibilidade */
+    display: block; /* Garante que o contêiner esteja visível */
+}
+
+.toast {
+    background-color: #10b981; /* Verde para sucesso */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: block; /* Garante que o toast esteja visível */
+}
+
+.toast.error {
+    background-color: #ef4444; /* Vermelho para erro */
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.search-container {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+#search-input {
+    padding: 8px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#search-button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#search-button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    main {
+        margin-left: 200px;
+    }
+
+    .form-grid-2,
+    .form-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+    .menu-options,
+    .form-grid-2,
+    .form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
