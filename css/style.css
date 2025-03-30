@@ -520,30 +520,102 @@ footer {
     transform: translateY(0);
 }
 
-.search-container {
+/* Filtros */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
     margin-bottom: 20px;
+    justify-content: space-between;
+}
+
+.search-container {
     display: flex;
     gap: 10px;
 }
 
 #search-input {
-    padding: 8px;
+    padding: 10px;
     width: 300px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1em;
 }
 
 #search-button {
-    padding: 8px 16px;
-    background-color: #007bff;
-    color: white;
+    padding: 10px 20px;
+    background: #1e3a8a;
+    color: #fff;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
 }
 
 #search-button:hover {
-    background-color: #0056b3;
+    background: #1e40af;
+}
+
+.date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-filter label {
+    color: #374151;
+    font-weight: 600;
+}
+
+.date-filter input[type="date"] {
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.convenio-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.convenio-filter label {
+    color: #374151;
+    font-weight: 600;
+}
+
+.convenio-filter select {
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1em;
+    min-width: 200px;
+}
+
+/* Toast container */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+}
+
+/* Estilizar o botão de detalhes na tabela */
+.patient-list button {
+    padding: 8px 16px;
+    background: #1e3a8a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.patient-list button:hover {
+    background: #1e40af;
 }
 
 /* Responsividade */

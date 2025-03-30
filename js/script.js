@@ -3,23 +3,17 @@ function showToast(message, type = 'success') {
     console.log('showToast chamado:', message, type);
     const toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
-        console.error('Contêiner de toast não encontrado. Certifique-se de que o elemento #toast-container existe na página.');
+        console.error('Contêiner de toast não encontrado.');
         return;
     }
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
     toastContainer.appendChild(toast);
-
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 100);
-
+    setTimeout(() => toast.classList.add('show'), 100);
     setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
+        setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
 
@@ -29,9 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuItems = document.querySelectorAll('.sidebar ul li a');
     menuItems.forEach(item => {
         const page = item.getAttribute('data-page');
-        if (page === currentPage) {
-            item.classList.add('active');
-        }
+        if (page === currentPage) item.classList.add('active');
     });
 
     // Login form submission
@@ -41,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const operador = document.getElementById('operador').value;
             const senha = document.getElementById('senha').value;
-
             try {
                 const response = await fetch('php/login.php', {
                     method: 'POST',
@@ -49,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ operador, senha })
                 });
                 const data = await response.json();
-
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
                     window.location.href = 'dashboard.html';
@@ -62,12 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // New attendance form
+    // New attendance form (mantido como está)
     const atendimentoForm = document.getElementById('cadastro-atendimento');
     if (atendimentoForm) {
-        document.getElementById('data-cadastro').value = new Date().toLocaleDateString('pt-BR');
-
-        // Carregar convênios
+        document.getElementById('data-cadastro').value = new Date().toISOString().split('T')[0];
         fetch('php/convenios.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
             .then(response => response.json())
             .then(convenios => {
@@ -77,8 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     select.innerHTML += `<option value="${conv.id}">${conv.nome}</option>`;
                 });
             });
-
-        // Carregar médicos
         fetch('php/medicos.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
             .then(response => response.json())
             .then(medicos => {
@@ -90,11 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             })
-            .catch(err => {
-                showToast('Erro ao carregar médicos: ' + err.message, 'error');
-            });
-
-        // Carregar exames iniciais apenas no primeiro <select>
+            .catch(err => showToast('Erro ao carregar médicos: ' + err.message, 'error'));
         fetch('php/exames.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
             .then(response => response.json())
             .then(exames => {
@@ -104,23 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     select.innerHTML += `<option value="${ex.id}">${ex.nome}</option>`;
                 });
             });
-
-        // Função para buscar paciente por RG ou CPF
         async function buscarPacientePorRgOuCpf(rg, cpf) {
             const params = new URLSearchParams();
             if (rg) params.append('rg', rg);
             if (cpf) params.append('cpf', cpf);
-
             try {
                 const response = await fetch(`php/atendimento.php?${params.toString()}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 const data = await response.json();
-
-                if (response.ok) {
-                    // Preencher os campos do formulário com os dados retornados
+                if (response.ok && data) {
                     document.getElementById('nome').value = data.nome || '';
                     document.getElementById('data-nascimento').value = data.data_nascimento || '';
                     document.getElementById('sexo').value = data.sexo || '';
@@ -137,25 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Erro ao buscar paciente: ' + err.message, 'error');
             }
         }
-
-        // Adicionar eventos onblur aos campos RG e CPF
         const rgInput = document.getElementById('rg');
         const cpfInput = document.getElementById('cpf');
-
         rgInput.addEventListener('blur', () => {
             const rg = rgInput.value.trim();
-            if (rg) {
-                buscarPacientePorRgOuCpf(rg, null);
-            }
+            if (rg) buscarPacientePorRgOuCpf(rg, null);
         });
-
         cpfInput.addEventListener('blur', () => {
             const cpf = cpfInput.value.trim();
-            if (cpf) {
-                buscarPacientePorRgOuCpf(null, cpf);
-            }
+            if (cpf) buscarPacientePorRgOuCpf(null, cpf);
         });
-
         const tabButtons = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
         tabButtons.forEach(button => {
@@ -166,14 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById(button.dataset.tab).classList.add('active');
             });
         });
-
         window.nextTab = function (nextTabId) {
             tabButtons.forEach(btn => btn.classList.remove('active'));
             tabContents.forEach(content => content.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${nextTabId}"]`).classList.add('active');
             document.getElementById(nextTabId).classList.add('active');
         };
-
         window.addExame = function () {
             const container = document.getElementById('exames-container');
             const newSelect = document.createElement('select');
@@ -181,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             newSelect.name = 'exames[]';
             newSelect.required = true;
             newSelect.innerHTML = '<option value="">Selecione o Exame</option>';
-
             fetch('php/exames.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
                 .then(response => response.json())
                 .then(exames => {
@@ -189,13 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         newSelect.innerHTML += `<option value="${ex.id}">${ex.nome}</option>`;
                     });
                 });
-
             container.appendChild(newSelect);
         };
-
         atendimentoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const exames = Array.from(document.querySelectorAll('.exame-select')).map(select => select.value);
+            const dataCadastroInput = document.getElementById('data-cadastro').value;
+            const dataCadastro = dataCadastroInput.split('/').reverse().join('-'); // Converte "30/03/2025" para "2025-03-30"
             const atendimento = {
                 convenio: document.getElementById('convenio').value,
                 exames: exames,
@@ -206,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sexo: document.getElementById('sexo').value,
                 acompanhante: document.getElementById('acompanhante').value,
                 cpfAcompanhante: document.getElementById('cpf-acompanhante').value,
-                dataCadastro: document.getElementById('data-cadastro').value,
+                dataCadastro: dataCadastro, // Usa o formato YYYY-MM-DD
                 medico: document.getElementById('medico').value,
                 localColeta: document.getElementById('local-coleta').value,
                 localEntrega: document.getElementById('local-entrega').value,
@@ -217,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 bairro: document.getElementById('bairro').value,
                 cidade: document.getElementById('cidade').value
             };
-
             try {
                 const response = await fetch('php/atendimento.php', {
                     method: 'POST',
@@ -227,13 +189,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     body: JSON.stringify(atendimento)
                 });
-
                 const data = await response.json();
                 if (response.ok) {
                     showToast(`Atendimento cadastrado com sucesso! Número do paciente: ${data.numpac || 'Não informado'}`, 'success');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 2000);
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
                 } else {
                     showToast('Erro: ' + (data.erro || 'Erro desconhecido'), 'error');
                 }
@@ -245,115 +204,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Central de Pacientes
-    const patientTableBody = document.getElementById('patient-table-body');
-    if (patientTableBody) {
-        fetch('php/atendimento.php', {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        })
-            .then(response => response.json())
-            .then(pacientes => {
-                pacientes.forEach(paciente => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${paciente.numpac}</td>
-                        <td>${paciente.nome}</td>
-                        <td>${paciente.cpf}</td>
-                        <td>${new Date(paciente.data_nascimento).toLocaleDateString('pt-BR')}</td>
-                    `;
-                    tr.addEventListener('dblclick', () => showPatientDetails(paciente.id));
-                    patientTableBody.appendChild(tr);
-                });
-            })
-            .catch(err => {
-                showToast('Erro ao carregar pacientes: ' + err.message, 'error');
-            });
+    if (currentPage === 'central-pacientes') {
+        loadConvenios();
+        loadPatients();
+        setupFilters();
     }
 
-    window.showPatientDetails = function (id) {
-        fetch(`php/atendimento.php?id=${id}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        })
-            .then(response => response.json())
-            .then(data => {
-                const detailsDiv = document.getElementById('patient-details');
-                if (data.erro) {
-                    detailsDiv.innerHTML = `<p>${data.erro}</p>`;
-                } else {
-                    detailsDiv.innerHTML = `
-                        <p><strong>Número do Paciente:</strong> ${data.numpac || 'Não informado'}</p>
-                        <p><strong>Nome:</strong> ${data.nome || 'Não informado'}</p>
-                        <p><strong>CPF:</strong> ${data.cpf || 'Não informado'}</p>
-                        <p><strong>Data de Nascimento:</strong> ${data.data_nascimento ? new Date(data.data_nascimento).toLocaleDateString('pt-BR') : 'Não informado'}</p>
-                        <p><strong>Sexo:</strong> ${data.sexo || 'Não informado'}</p>
-                        <p><strong>Exames:</strong> ${data.exames && data.exames.length > 0 ? data.exames.join(', ') : 'Nenhum exame cadastrado'}</p>
-                        <p><strong>Médico:</strong> ${data.medico_nome || 'Não informado'}</p>
-                        <p><strong>Telefone:</strong> ${data.telefone || 'Não informado'}</p>
-                        <p><strong>Endereço:</strong> ${data.endereco || 'Não informado'}, ${data.bairro || 'Não informado'}, ${data.cidade || 'Não informado'}</p>
-                    `;
-                }
-                document.getElementById('patient-modal').style.display = 'flex';
-            })
-            .catch(err => {
-                showToast('Erro ao carregar detalhes: ' + err.message, 'error');
-            });
-    };
-
-    window.showDetalhes = function (id) {
-        fetch(`php/atendimento.php?id=${id}`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                const modal = document.getElementById('modal-detalhes');
-                const modalContent = document.getElementById('modal-detalhes-content');
-
-                if (!modal || !modalContent) {
-                    console.error('Elementos do modal não encontrados. Verifique se #modal-detalhes e #modal-detalhes-content estão no HTML.');
-                    showToast('Erro: Modal de detalhes não encontrado na página', 'error');
-                    return;
-                }
-
-                modalContent.innerHTML = `
-                    <h2>Detalhes do Atendimento</h2>
-                    <p><strong>Número do Paciente:</strong> ${data.numpac || 'Não informado'}</p>
-                    <p><strong>Nome:</strong> ${data.nome || 'Não informado'}</p>
-                    <p><strong>Convênio:</strong> ${data.convenio_nome || 'Não informado'}</p>
-                    <p><strong>Médico:</strong> ${data.medico_nome || 'Não informado'}</p>
-                    <p><strong>Exames:</strong> ${data.exames && data.exames.length > 0 ? data.exames.join(', ') : 'Nenhum exame cadastrado'}</p>
-                    <p><strong>Data de Cadastro:</strong> ${data.data_cadastro || 'Não informado'}</p>
-                    <p><strong>RG:</strong> ${data.rg || 'Não informado'}</p>
-                    <p><strong>CPF:</strong> ${data.cpf || 'Não informado'}</p>
-                    <p><strong>Data de Nascimento:</strong> ${data.data_nascimento || 'Não informado'}</p>
-                    <p><strong>Sexo:</strong> ${data.sexo || 'Não informado'}</p>
-                    <p><strong>Acompanhante:</strong> ${data.acompanhante || 'Não informado'}</p>
-                    <p><strong>CPF do Acompanhante:</strong> ${data.cpf_acompanhante || 'Não informado'}</p>
-                    <p><strong>Local de Coleta:</strong> ${data.local_coleta || 'Não informado'}</p>
-                    <p><strong>Local de Entrega:</strong> ${data.local_entrega || 'Não informado'}</p>
-                    <p><strong>Procedência:</strong> ${data.procedencia || 'Não informado'}</p>
-                    <p><strong>Nome da Mãe:</strong> ${data.nome_mae || 'Não informado'}</p>
-                    <p><strong>Telefone:</strong> ${data.telefone || 'Não informado'}</p>
-                    <p><strong>Endereço:</strong> ${data.endereco || 'Não informado'}</p>
-                    <p><strong>Bairro:</strong> ${data.bairro || 'Não informado'}</p>
-                    <p><strong>Cidade:</strong> ${data.cidade || 'Não informado'}</p>
-                `;
-                modal.style.display = 'block';
-            })
-            .catch(err => {
-                showToast('Erro ao carregar detalhes: ' + err.message, 'error');
-            });
-    };
-
-    window.closeModal = function () {
-        const patientModal = document.getElementById('patient-modal');
-        if (patientModal) patientModal.style.display = 'none';
-
-        const detalhesModal = document.getElementById('modal-detalhes');
-        if (detalhesModal) detalhesModal.style.display = 'none';
-    };
-
-    // Configurações
+    // Configurações (mantido como está)
     const configPage = document.querySelector('#configuracoes');
     if (configPage) {
         const tabButtons = document.querySelectorAll('.tab-btn');
@@ -366,24 +223,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById(button.dataset.tab).classList.add('active');
             });
         });
-
-        // Usuários
         const usuarioForm = document.getElementById('usuario-form');
         if (usuarioForm) {
             fetch('php/usuarios.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
                 .then(response => response.json())
                 .then(usuarios => {
                     const list = document.getElementById('usuarios-list');
-                    usuarios.forEach(user => {
-                        list.innerHTML += `<li>${user.operador}</li>`;
-                    });
+                    usuarios.forEach(user => list.innerHTML += `<li>${user.operador}</li>`);
                 });
-
             usuarioForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const operador = document.getElementById('novo-operador').value;
                 const senha = document.getElementById('novo-senha').value;
-
                 try {
                     const response = await fetch('php/usuarios.php', {
                         method: 'POST',
@@ -406,23 +257,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
-        // Exames
         const exameForm = document.getElementById('exame-form');
         if (exameForm) {
             fetch('php/exames.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
                 .then(response => response.json())
                 .then(exames => {
                     const list = document.getElementById('exames-list');
-                    exames.forEach(ex => {
-                        list.innerHTML += `<li>${ex.nome}</li>`;
-                    });
+                    exames.forEach(ex => list.innerHTML += `<li>${ex.nome}</li>`);
                 });
-
             exameForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const nome = document.getElementById('novo-exame').value;
-
                 try {
                     const response = await fetch('php/exames.php', {
                         method: 'POST',
@@ -445,23 +290,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
-        // Convênios
         const convenioForm = document.getElementById('convenio-form');
         if (convenioForm) {
             fetch('php/convenios.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
                 .then(response => response.json())
                 .then(convenios => {
                     const list = document.getElementById('convenios-list');
-                    convenios.forEach(conv => {
-                        list.innerHTML += `<li>${conv.nome}</li>`;
-                    });
+                    convenios.forEach(conv => list.innerHTML += `<li>${conv.nome}</li>`);
                 });
-
             convenioForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const nome = document.getElementById('novo-convenio').value;
-
                 try {
                     const response = await fetch('php/convenios.php', {
                         method: 'POST',
@@ -484,8 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
-        // Médicos
         const medicoForm = document.getElementById('medico-form');
         if (medicoForm) {
             fetch('php/medicos.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
@@ -503,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         list.appendChild(li);
                     });
                 });
-
             medicoForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const medico = {
@@ -513,7 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     telefone: document.getElementById('novo-medico-telefone').value,
                     email: document.getElementById('novo-medico-email').value
                 };
-
                 try {
                     const response = await fetch('php/medicos.php', {
                         method: 'POST',
@@ -550,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast('Erro: ' + err.message, 'error');
                 }
             });
-
             window.toggleMedicoStatus = function (id, currentStatus, li, button) {
                 const newStatus = currentStatus === 'Ativo' ? 'Inativo' : 'Ativo';
                 fetch('php/medicos.php', {
@@ -577,53 +411,106 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Função para carregar pacientes (com ou sem filtro)
-async function loadPatients(searchTerm = '') {
-    try {
-        const url = searchTerm
-            ? `php/atendimento.php?search=${encodeURIComponent(searchTerm)}`
-            : 'php/atendimento.php';
-
-        const response = await fetch(url, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        const data = await response.json();
-
-        const tableBody = document.getElementById('patient-table-body');
-        tableBody.innerHTML = '';
-
-        data.forEach(atendimento => {
-            const row = `
-                <tr>
-                    <td>${atendimento.numpac}</td>
-                    <td>${atendimento.nome}</td>
-                    <td>${atendimento.cpf || 'Não informado'}</td>
-                    <td>${formatDate(atendimento.data_nascimento)}</td>
-                    <td><button onclick="showDetalhes(${atendimento.id})">Detalhes</button></td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-    } catch (error) {
-        showToast('Erro ao carregar pacientes', 'error');
-    }
+// Funções para Central de Pacientes
+function loadConvenios() {
+    fetch('php/convenios.php', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+        .then(response => response.json())
+        .then(convenios => {
+            const select = document.getElementById('convenio-select');
+            convenios.forEach(conv => {
+                const option = document.createElement('option');
+                option.value = conv.id;
+                option.textContent = conv.nome;
+                select.appendChild(option);
+            });
+        })
+        .catch(err => showToast('Erro ao carregar convênios: ' + err.message, 'error'));
 }
 
-// Evento de busca (ao clicar no botão ou pressionar Enter)
-document.addEventListener('DOMContentLoaded', () => {
+function loadPatients(filters = {}) {
+    const url = new URL('/complabweb/php/atendimento.php', window.location.origin); // Caminho absoluto corrigido
+    Object.keys(filters).forEach(key => url.searchParams.append(key, filters[key]));
+    fetch(url, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
+        .then(response => response.json())
+        .then(pacientes => {
+            const patientTableBody = document.getElementById('patient-table-body');
+            patientTableBody.innerHTML = '';
+            pacientes.forEach(paciente => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${paciente.numpac || 'Não informado'}</td>
+                    <td>${paciente.nome || 'Não informado'}</td>
+                    <td>${paciente.cpf || 'Não informado'}</td>
+                    <td>${paciente.data_nascimento ? new Date(paciente.data_nascimento).toLocaleDateString('pt-BR') : 'Não informado'}</td>
+                    <td><button onclick="showPatientDetails(${paciente.id})">Detalhes</button></td>
+                `;
+                tr.addEventListener('dblclick', () => showPatientDetails(paciente.id));
+                patientTableBody.appendChild(tr);
+            });
+        })
+        .catch(err => showToast('Erro ao carregar pacientes: ' + err.message, 'error'));
+}
+
+function setupFilters() {
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
+    const dateStart = document.getElementById('date-start');
+    const dateEnd = document.getElementById('date-end');
+    const convenioSelect = document.getElementById('convenio-select');
 
-    searchButton.addEventListener('click', () => {
-        loadPatients(searchInput.value.trim());
-    });
+    const applyFilters = () => {
+        const filters = {};
+        if (searchInput.value) filters.search = searchInput.value.trim();
+        if (dateStart.value) filters.date_start = dateStart.value;
+        if (dateEnd.value) filters.date_end = dateEnd.value;
+        if (convenioSelect.value) filters.convenio = convenioSelect.value;
+        loadPatients(filters);
+    };
 
+    searchButton.addEventListener('click', applyFilters);
     searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            loadPatients(searchInput.value.trim());
-        }
+        if (e.key === 'Enter') applyFilters();
     });
+    dateStart.addEventListener('change', applyFilters);
+    dateEnd.addEventListener('change', applyFilters);
+    convenioSelect.addEventListener('change', applyFilters);
+}
 
-    // Carrega todos os pacientes inicialmente
-    loadPatients();
-});
+window.showPatientDetails = function (id) {
+    fetch(`/complabweb/php/atendimento.php?id=${id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            const detailsDiv = document.getElementById('patient-details');
+            if (data.erro) {
+                detailsDiv.innerHTML = `<p>${data.erro}</p>`;
+            } else {
+                detailsDiv.innerHTML = `
+                    <p><strong>Número do Paciente:</strong> ${data.numpac || 'Não informado'}</p>
+                    <p><strong>Nome:</strong> ${data.nome || 'Não informado'}</p>
+                    <p><strong>CPF:</strong> ${data.cpf || 'Não informado'}</p>
+                    <p><strong>Data de Nascimento:</strong> ${data.data_nascimento ? new Date(data.data_nascimento).toLocaleDateString('pt-BR') : 'Não informado'}</p>
+                    <p><strong>Sexo:</strong> ${data.sexo || 'Não informado'}</p>
+                    <p><strong>Exames:</strong> ${data.exames && data.exames.length > 0 ? data.exames.join(', ') : 'Nenhum exame cadastrado'}</p>
+                    <p><strong>Médico:</strong> ${data.medico_nome || 'Não informado'}</p>
+                    <p><strong>Telefone:</strong> ${data.telefone || 'Não informado'}</p>
+                    <p><strong>Endereço:</strong> ${data.endereco || 'Não informado'}, ${data.bairro || 'Não informado'}, ${data.cidade || 'Não informado'}</p>
+                `;
+            }
+            document.getElementById('patient-modal').style.display = 'flex';
+        })
+        .catch(err => showToast('Erro ao carregar detalhes: ' + err.message, 'error'));
+};
+
+window.closeModal = function () {
+    const patientModal = document.getElementById('patient-modal');
+    if (patientModal) patientModal.style.display = 'none';
+    const detalhesModal = document.getElementById('modal-detalhes');
+    if (detalhesModal) detalhesModal.style.display = 'none';
+};

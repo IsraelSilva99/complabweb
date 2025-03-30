@@ -2,14 +2,15 @@
 session_start();
 require 'config.php';
 
-// Verificar autenticação
 if (!isset($_SESSION['user'])) {
+    header('Content-Type: application/json');
     http_response_code(401);
     echo json_encode(['erro' => 'Não autorizado']);
     exit;
 }
 
-// Função para buscar os exames associados a um atendimento
+header('Content-Type: application/json');
+
 function getExamesByAtendimento($pdo, $atendimentoId) {
     $stmtExames = $pdo->prepare("
         SELECT e.nome 
@@ -18,31 +19,23 @@ function getExamesByAtendimento($pdo, $atendimentoId) {
         WHERE ae.atendimento_id = ?
     ");
     $stmtExames->execute([$atendimentoId]);
-    $exames = $stmtExames->fetchAll(PDO::FETCH_COLUMN);
-    return $exames ?: []; // Retorna um array vazio se não houver exames
+    return $stmtExames->fetchAll(PDO::FETCH_COLUMN) ?: [];
 }
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Cadastro de um novo atendimento
         $data = json_decode(file_get_contents('php://input'), true);
-
-        // Validação dos dados
         if (empty($data['nome']) || empty($data['cpf'])) {
             http_response_code(400);
             echo json_encode(['erro' => 'Nome e CPF são obrigatórios']);
             exit;
         }
-
-        // Gerar o numpac (exemplo: baseado na data atual + ID)
-        $dataCadastro = date('dmy'); // Ex.: 250329 para 25/03/29
+        $dataCadastro = date('dmy');
         $stmt = $pdo->prepare("SELECT MAX(id) as max_id FROM atendimentos");
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $nextId = $result['max_id'] + 1;
-        $numpac = $dataCadastro . sprintf("%04d", $nextId); // Ex.: 2503290001
-
-        // Inserir o atendimento no banco de dados
+        $nextId = ($result['max_id'] ?? 0) + 1;
+        $numpac = $dataCadastro . sprintf("%04d", $nextId);
         $stmt = $pdo->prepare("
             INSERT INTO atendimentos (
                 numpac, convenio, rg, cpf, nome, data_nascimento, sexo, 
@@ -52,46 +45,22 @@ try {
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
-            $numpac,
-            $data['convenio'],
-            $data['rg'],
-            $data['cpf'],
-            $data['nome'],
-            $data['dataNascimento'],
-            $data['sexo'],
-            $data['acompanhante'],
-            $data['cpfAcompanhante'],
-            $data['dataCadastro'],
-            $data['medico'],
-            $data['localColeta'],
-            $data['localEntrega'],
-            $data['procedencia'],
-            $data['nomeMae'],
-            $data['telefone'],
-            $data['endereco'],
-            $data['bairro'],
-            $data['cidade']
+            $numpac, $data['convenio'], $data['rg'], $data['cpf'], $data['nome'],
+            $data['dataNascimento'], $data['sexo'], $data['acompanhante'], $data['cpfAcompanhante'],
+            $data['dataCadastro'], $data['medico'], $data['localColeta'], $data['localEntrega'],
+            $data['procedencia'], $data['nomeMae'], $data['telefone'], $data['endereco'],
+            $data['bairro'], $data['cidade']
         ]);
-
-        // Obter o ID do atendimento recém-criado
         $atendimentoId = $pdo->lastInsertId();
-
-        // Inserir os exames associados (se houver)
         if (!empty($data['exames'])) {
             $stmtExame = $pdo->prepare("INSERT INTO atendimento_exames (atendimento_id, exame_id) VALUES (?, ?)");
             foreach ($data['exames'] as $exameId) {
-                if (!empty($exameId)) {
-                    $stmtExame->execute([$atendimentoId, $exameId]);
-                }
+                if (!empty($exameId)) $stmtExame->execute([$atendimentoId, $exameId]);
             }
         }
-
-        // Retornar o número do paciente como um objeto JSON
         echo json_encode(['numpac' => $numpac]);
     } else {
-        // Listagem ou detalhes de atendimentos (GET)
         if (isset($_GET['id'])) {
-            // Buscar um atendimento específico (para o modal de detalhes)
             $id = $_GET['id'];
             $stmt = $pdo->prepare("
                 SELECT a.*, m.nome AS medico_nome, c.nome AS convenio_nome 
@@ -102,31 +71,61 @@ try {
             ");
             $stmt->execute([$id]);
             $atendimento = $stmt->fetch(PDO::FETCH_ASSOC);
-
             if ($atendimento) {
-                // Buscar os exames associados
                 $atendimento['exames'] = getExamesByAtendimento($pdo, $id);
                 echo json_encode($atendimento);
             } else {
                 http_response_code(404);
                 echo json_encode(['erro' => 'Atendimento não encontrado']);
             }
+        } elseif (isset($_GET['rg']) || isset($_GET['cpf'])) {
+            $param = isset($_GET['rg']) ? 'rg' : 'cpf';
+            $value = $_GET[$param];
+            $stmt = $pdo->prepare("
+                SELECT * FROM atendimentos 
+                WHERE $param = ? 
+                ORDER BY data_cadastro DESC 
+                LIMIT 1
+            ");
+            $stmt->execute([$value]);
+            $atendimento = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo json_encode($atendimento ?: []);
         } else {
-            // Listar todos os atendimentos (para o dashboard)
-            $stmt = $pdo->query("
+            $query = "
                 SELECT a.*, m.nome AS medico_nome, c.nome AS convenio_nome 
                 FROM atendimentos a
                 LEFT JOIN medicos m ON a.medico_id = m.id
                 LEFT JOIN convenios c ON a.convenio = c.id
-            ");
+                WHERE 1=1
+            ";
+            $params = [];
+            if (!empty($_GET['search'])) {
+                $search = "%" . strtolower($_GET['search']) . "%"; // Converte o termo de busca para minúsculas
+                $query .= " AND (LOWER(a.numpac) LIKE ? OR LOWER(a.nome) LIKE ? OR LOWER(a.cpf) LIKE ?)";
+                $params[] = $search;
+                $params[] = $search;
+                $params[] = $search;
+            }
+            if (!empty($_GET['date_start'])) {
+                $query .= " AND a.data_cadastro >= ?";
+                $params[] = $_GET['date_start'];
+            }
+            if (!empty($_GET['date_end'])) {
+                $query .= " AND a.data_cadastro <= ?";
+                $params[] = $_GET['date_end'];
+            }
+            if (!empty($_GET['convenio'])) {
+                $query .= " AND a.convenio = ?";
+                $params[] = $_GET['convenio'];
+            }
+            $query .= " ORDER BY a.data_cadastro DESC";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute($params);
             $atendimentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Adicionar os exames a cada atendimento
             foreach ($atendimentos as &$atendimento) {
                 $atendimento['exames'] = getExamesByAtendimento($pdo, $atendimento['id']);
             }
-            unset($atendimento); // Limpar a referência
-
+            unset($atendimento);
             echo json_encode($atendimentos);
         }
     }
