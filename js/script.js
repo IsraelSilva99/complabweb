@@ -1,11 +1,7 @@
-// Função para exibir notificações (toast)
+// Função para toast
 function showToast(message, type = 'success') {
-    console.log('showToast chamado:', message, type);
     const toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-        console.error('Contêiner de toast não encontrado.');
-        return;
-    }
+    if (!toastContainer) return;
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
@@ -16,6 +12,123 @@ function showToast(message, type = 'success') {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
+
+// Abrir modal
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+    } else {
+        console.error('Modal não encontrado:', modalId);
+    }
+}
+
+// Verificar senha no backend
+async function verifyPassword() {
+    const password = document.getElementById('config-password').value;
+    try {
+        const response = await fetch('/complabweb/php/check_config_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+        const data = await response.json();
+        if (response.ok && data.success) {
+            closeModal('password-modal');
+            openModal('config-modal');
+        } else {
+            showToast(data.erro || 'Senha incorreta!', 'error');
+        }
+    } catch (err) {
+        showToast('Erro ao verificar senha: ' + err.message, 'error');
+        console.error('Erro na requisição:', err);
+    }
+}
+
+// Listar bancos disponíveis
+async function loadDatabases() {
+    const host = document.getElementById('config-host').value;
+    const username = document.getElementById('config-username').value;
+    const password = document.getElementById('config-password-db').value;
+    if (!host || !username || !password) return;
+
+    try {
+        const response = await fetch('/complabweb/php/list_databases.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ host, username, password })
+        });
+        const data = await response.json();
+        if (response.ok && data.databases) {
+            const dbSelect = document.getElementById('config-dbname');
+            dbSelect.innerHTML = '<option value="">Selecione um banco de dados</option>';
+            data.databases.forEach(db => {
+                const option = document.createElement('option');
+                option.value = db;
+                option.textContent = db;
+                dbSelect.appendChild(option);
+            });
+        } else {
+            showToast('Erro ao listar bancos: ' + (data.erro || 'Erro desconhecido'), 'error');
+        }
+    } catch (err) {
+        showToast('Erro ao listar bancos: ' + err.message, 'error');
+    }
+}
+
+// Eventos
+document.addEventListener('DOMContentLoaded', () => {
+    const configBtn = document.getElementById('config-btn');
+    if (configBtn) {
+        configBtn.addEventListener('click', () => openModal('password-modal'));
+    }
+
+    const passwordForm = document.getElementById('password-form');
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            verifyPassword();
+        });
+    }
+
+    const configForm = document.getElementById('config-form');
+    if (configForm) {
+        configForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const configData = {
+                host: document.getElementById('config-host').value,
+                dbname: document.getElementById('config-dbname').value,
+                username: document.getElementById('config-username').value,
+                password: document.getElementById('config-password-db').value
+            };
+            try {
+                const response = await fetch('/complabweb/php/update_config.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(configData)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showToast('Configurações salvas com sucesso!', 'success');
+                    closeModal('config-modal');
+                } else {
+                    showToast('Erro: ' + data.erro, 'error');
+                }
+            } catch (err) {
+                showToast('Erro ao salvar configurações: ' + err.message, 'error');
+                console.error('Erro na requisição:', err);
+            }
+        });
+    }
+
+    const connectionFields = ['config-host', 'config-username', 'config-password-db'];
+    connectionFields.forEach(field => {
+        const element = document.getElementById(field);
+        if (element) {
+            element.addEventListener('change', loadDatabases);
+        }
+    });
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     // Highlight active menu item
